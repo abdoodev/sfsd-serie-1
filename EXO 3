@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int main(){
+    char w[50];
+    char word[50];
+    FILE *f = fopen("data1.txt", "w");
+     if (f == NULL){
+        printf("error");
+        exit(1);
+    }
+    printf("write the word that u want to count his occurrence: ");
+    scanf("%s", word);
+    int p = 0;
+    while (fscanf(f, "%s", w) == 1){
+        if (strcmp(w, word) == 0){
+            p++;
+        }
+    }
+    printf("the occurrence of the word %s is : %d\n", word, p);
+    fclose(f);
+    return 0;
+}
+
