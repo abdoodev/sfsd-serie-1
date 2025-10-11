@@ -1,0 +1,136 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+typedef struct{
+     char city [20];
+      int temperature;
+       char date [11];
+} meteo;
+_______________________________________________
+void modify_record(){
+  char city[20];
+  char date[11];
+ FILE *f = fopen("meteo.txt","rb+");
+ if (f == NULL){
+    printf("error");
+    exit(1);
+ }
+    meteo m;
+    printf("enter the city : ");
+    scanf("%s",city);
+    printf("enter the date yyyy-mm-dd : ");
+    scanf("%s",date);
+   while (fread(&m,sizeof(meteo),1,f) == 1){
+    if( strcmp(m.city,city) == 0 && strcmp(m.date,date) == 0){
+    printf("enter the new temperature : ");
+ scanf("%d",&m.temperature);
+ fseek(f,-sizeof(meteo),SEEK_CUR);
+    fwrite(&m,sizeof(meteo),1,f);
+    
+    }
+    fclose(f);
+}
+}
+_________________________________________________
+void delet_city(){
+    char city[20];
+    FILE *f = fopen("meteo.txt","rb");
+    FILE *temp = fopen("temp.txt","wb");
+    if (f == NULL || temp == NULL){
+        printf("error");
+        exit(1);
+    }
+    meteo m;
+    printf("enter the city to delete : ");
+    scanf("%s",city);
+    while (fread(&m,sizeof(meteo),1,f) == 1){
+        if (strcmp(m.city,city) != 0){
+            fwrite(&m,sizeof(meteo),1,temp);
+        }
+    }
+    fclose(f);
+    fclose(temp);
+    remove("meteo.txt");
+    rename("temp.txt","meteo.txt");
+}
+_________________________________________________
+void city_stat(){
+    char city[20];
+    FILE *f = fopen("meteo.txt","rb");
+    if (f == NULL){
+        printf("error");
+        exit(1);
+    }
+    meteo m;
+    int min=100, max=-100, sum=0, count=0;
+    printf("enter the city : ");
+    scanf("%s",city);
+    while (fread(&m,sizeof(meteo),1,f) == 1){
+        if (strcmp(m.city,city) == 0){
+            if (m.temperature < min){
+                min = m.temperature;
+            }
+            if (m.temperature > max){
+                max = m.temperature;
+            }
+            sum += m.temperature;
+            count++;
+        }
+    }
+    if (count == 0){
+        printf("no records found for this city\n");
+    } else {
+        printf("minimum temperature: %d\n",min);
+        printf("maximum temperature: %d\n",max);
+        printf("average temperature: %.2f\n",(float)sum/count);
+    }
+    fclose(f);
+}
+_________________________________________________
+void record(){
+    FILE *f = fopen("meteo.txt","ab");
+    if (f == NULL){
+        printf("error");
+        exit(1);
+    }
+    meteo m;
+    printf("enter the city : ");
+    scanf("%s",m.city);
+    printf("enter the temperature : ");
+    scanf("%d",&m.temperature);
+    printf("enter the date yyyy-mm-dd : ");
+    scanf("%s",m.date);
+    fwrite(&m,sizeof(meteo),1,f);
+    fclose(f);
+}
+
+void record();
+void city_stat();
+void modify_record();
+void delet_city();
+
+int main(){
+int choix;
+do{
+printf("_______ meteo _______\n");
+printf("1.  add new record\n");
+printf("2. show the minimum, maximum, and average temperatures of a  city.  \n");
+printf ("3.Modify the temperature");
+printf("4. delete a city \n");
+printf("5. exit\n");
+printf("enter your choice : ");
+scanf("%d",&choix);
+switch(choix){
+    case 1: record(); break;
+    case 2: city_stat(); break;
+    case 3: modify_record(); break;
+    case 4: delet_city(); break;
+    case 5: exit(0); break;
+    default: printf("invalid choice\n");
+}   while (choix != 5)
+{
+    return 0;
+}
+}  
+
+
